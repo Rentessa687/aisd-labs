@@ -10,6 +10,28 @@ private:
     std::size_t capacity_ = 0;
 public:
     Set() = default;
+    Set(const Set& other) {
+        data_ = new T[other.size_];
+        for (std::size_t i = 0; i < other.size_; ++i) {
+            data_[i] = other.data_[i];
+        }
+        size_ = other.size_;
+        capacity_ = other.size_;
+    }
+    Set& operator=(const Set& other) {
+        if (this == &other) {
+            return *this;
+        }
+        T* new_data = new T[other.size_];
+        for (std::size_t i = 0; i < other.size_; ++i) {
+            new_data[i] = other.data_[i];
+        }
+        delete[] data_;
+        data_ = new_data;
+        size_ = other.size_;
+        capacity_ = other.size_;
+        return *this;
+    }
     ~Set() {
         delete[] data_;
     }
