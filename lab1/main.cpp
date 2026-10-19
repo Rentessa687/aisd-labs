@@ -119,6 +119,44 @@ int test_add(const T& first, const T& second, const std::string& type_name) {
     return fail_count;
 }
 
+template<typename T>
+int test_add_operator(const T& first, const T& second, const std::string& type_name) {
+    std::cout << "--- Set<" << type_name << ">, add operator ---\n";
+    int fail_count = 0;
+    Set<T> a;
+    Set<T> b = a + first;
+    if (!check_condition(b.size() == 1, "first added: size = 1")) {
+        fail_count++;
+    }
+    if (!check_condition(b.contains(first), "b contains first")) {
+        fail_count++;
+    }
+    if (!check_condition(a.size() == 0, "a is empty same")) {
+        fail_count++;
+    }
+    Set<T> c = b + second;
+    if (!check_condition(c.size() == 2, "first and second added: size = 2")) {
+        fail_count++;
+    }
+    if (!check_condition(c.contains(first), "c contains first")) {
+        fail_count++;
+    }
+    if (!check_condition(c.contains(second), "c contains second")) {
+        fail_count++;
+    }
+    if (!check_condition(b.size() == 1, "size of b is 1 same")) {
+        fail_count++;
+    }
+    if (!check_condition(!b.contains(second), "b is not contains second")) {
+        fail_count++;
+    }
+    b + first;
+    if (!check_condition(b.size() == 1, "size of b is 1 after added first")) {
+        fail_count++;
+    }
+    return fail_count;
+}
+
 int main() {
     int result_count = 0;
     result_count += test_empty_set<int>(42, "int");
@@ -133,6 +171,10 @@ int main() {
     result_count += test_add<float>(2.5f, 3.7f, "float");
     result_count += test_add<std::string>("abc", "cucumber", "std::string");
     result_count += test_add<std::pair<int, double>>({1, 4.6}, {4, 1.4}, "std::pair<int, double>");
+    result_count += test_add_operator<int>(2, 5, "int");
+    result_count += test_add_operator<float>(2.5f, 3.7f, "float");
+    result_count += test_add_operator<std::string>("abc", "cucumber", "std::string");
+    result_count += test_add_operator<std::pair<int, double>>({1, 4.6}, {4, 1.4}, "std::pair<int, double>");
     std::cout << "\nFailed: " << result_count << "\n";
     if (result_count == 0) {
         return 0;
