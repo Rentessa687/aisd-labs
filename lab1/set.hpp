@@ -1,6 +1,8 @@
 #pragma once
 #include <cstddef>
 #include <stdexcept>
+#include <cmath>
+#include <type_traits>
 
 template <typename T>
 class Set {
@@ -8,6 +10,15 @@ private:
     T* data_ = nullptr;
     std::size_t size_ = 0;
     std::size_t capacity_ = 0;
+    static constexpr double epsilon = 0.000001;
+    static bool is_equal(const T& lhs, const T& rhs) {
+        if constexpr (std::is_floating_point_v<T>) {
+            return std::abs(lhs - rhs) < epsilon;
+        }
+        else {
+            return lhs == rhs;
+        }
+    }
 public:
     Set() = default;
     Set(const Set& other) {
@@ -51,7 +62,7 @@ public:
     }
     bool contains(const T& value) const {
         for (std::size_t i = 0; i < size(); ++i) {
-            if (data_[i] == value) {
+            if (is_equal(data_[i], value)) {
                 return true;
             }
         }
