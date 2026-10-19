@@ -87,6 +87,38 @@ int test_copy(const std::string& type_name) {
     return fail_count;
 }
 
+template<typename T>
+int test_add(const T& first, const T& second, const std::string& type_name) {
+    std::cout << "--- Set<" << type_name << ">, add ---\n";
+    int fail_count = 0;
+    Set<T> s;
+    s += first;
+    if (!check_condition(s.size() == 1, "first added: size = 1")) {
+        fail_count++;
+    }
+    if (!check_condition(s.contains(first), "s contains first")) {
+        fail_count++;
+    }
+    s += first;
+    if (!check_condition(s.size() == 1, "first added again: size also 1")) {
+        fail_count++;
+    }
+    s += second;
+    if (!check_condition(s.size() == 2, "second added: size = 2")) {
+        fail_count++;
+    }
+    if (!check_condition(s.contains(second), "s contains second")) {
+        fail_count++;
+    }
+    if (!check_condition(s[0] == first, "s[0] = first")) {
+        fail_count++;
+    }
+    if (!check_condition(s[1] == second, "s[1] = second")) {
+        fail_count++;
+    }
+    return fail_count;
+}
+
 int main() {
     int result_count = 0;
     result_count += test_empty_set<int>(42, "int");
@@ -97,6 +129,10 @@ int main() {
     result_count += test_copy<float>("float");
     result_count += test_copy<std::string>("std::string");
     result_count += test_copy<std::pair<int, double>>("std::pair<int, double>");
+    result_count += test_add<int>(2, 5, "int");
+    result_count += test_add<float>(2.5f, 3.7f, "float");
+    result_count += test_add<std::string>("abc", "cucumber", "std::string");
+    result_count += test_add<std::pair<int, double>>({1, 4.6}, {4, 1.4}, "std::pair<int, double>");
     std::cout << "\nFailed: " << result_count << "\n";
     if (result_count == 0) {
         return 0;

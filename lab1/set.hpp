@@ -19,6 +19,22 @@ private:
             return lhs == rhs;
         }
     }
+    void grow() {
+        std::size_t new_capacity = 0;
+        if (capacity_ == 0) {
+            new_capacity = 1;
+        }
+        else {
+            new_capacity = capacity_ * 2;
+        }
+        T* new_data = new T[new_capacity];
+        for (std::size_t i = 0; i < size_; ++i) {
+            new_data[i] = data_[i];
+        }
+        delete[] data_;
+        data_ = new_data;
+        capacity_ = new_capacity;
+    }
 public:
     Set() = default;
     Set(const Set& other) {
@@ -67,5 +83,16 @@ public:
             }
         }
         return false;
+    }
+    Set& operator+=(const T& value) {
+        if (contains(value)) {
+            return *this;
+        }
+        if (size_ == capacity_) {
+            grow();
+        }
+        data_[size_] = value;
+        ++size_;
+        return *this;
     }
 };
