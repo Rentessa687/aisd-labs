@@ -106,4 +106,16 @@ public:
         set_copied += value;
         return set_copied;
     }
+    Set& operator-=(const T& value) {
+        std::size_t idx = find_index(value);
+        if (idx == size()) {
+            return *this;
+        }
+
+        for (; idx < size() - 1; ++idx) {
+            data_[idx] = data_[idx + 1];
+        }
+        --size_;
+        return *this;
+    }
 };

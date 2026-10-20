@@ -147,11 +147,52 @@ int test_add_operator(const T& first, const T& second, const std::string& type_n
     if (!check_condition(b.size() == 1, "size of b is 1 same")) {
         fail_count++;
     }
-    if (!check_condition(!b.contains(second), "b is not contains second")) {
+    if (!check_condition(!b.contains(second), "b does not contain second")) {
         fail_count++;
     }
     b + first;
     if (!check_condition(b.size() == 1, "size of b is 1 after added first")) {
+        fail_count++;
+    }
+    return fail_count;
+}
+
+template<typename T>
+int test_remove(const T& first, const T& second, const T& third, const std::string& type_name) {
+    std::cout << "--- Set<" << type_name << ">, remove ---\n";
+    int fail_count = 0;
+    Set<T> s;
+    s += first;
+    s += second;
+    s += third;
+    s -= second;
+    if (!check_condition(s.size() == 2, "size of s is 2 after removing second")) {
+        fail_count++;
+    }
+    if (!check_condition(!s.contains(second), "s does not contain second")) {
+        fail_count++;
+    }
+    if (!check_condition(s[0] == first && s[1] == third, "order of elements is preserved")) {
+        fail_count++;
+    }
+    s -= second;
+    if (!check_condition(s.size() == 2, "same size after repeat removal")) {
+        fail_count++;
+    }
+    s -= first;
+    s -= third;
+    if (!check_condition(s.empty(), "s is empty after removing first and third")) {
+        fail_count++;
+    }
+    s -= first;
+    if (!check_condition(s.empty(), "s stays empty when removing from empty set")) {
+        fail_count++;
+    }
+    s += first;
+    if (!check_condition(s.size() == 1, "size of s is 1 after added first")) {
+        fail_count++;
+    }
+    if (!check_condition(s.contains(first), "first is in s")) {
         fail_count++;
     }
     return fail_count;
@@ -175,6 +216,10 @@ int main() {
     result_count += test_add_operator<float>(2.5f, 3.7f, "float");
     result_count += test_add_operator<std::string>("abc", "cucumber", "std::string");
     result_count += test_add_operator<std::pair<int, double>>({1, 4.6}, {4, 1.4}, "std::pair<int, double>");
+    result_count += test_remove<int>(2, 5, 3, "int");
+    result_count += test_remove<float>(2.5f, 3.7f, 1.2f, "float");
+    result_count += test_remove<std::string>("abc", "cucumber", "def",  "std::string");
+    result_count += test_remove<std::pair<int, double>>({1, 4.6}, {4, 1.4}, {2, 3.2}, "std::pair<int, double>");
     std::cout << "\nFailed: " << result_count << "\n";
     if (result_count == 0) {
         return 0;
