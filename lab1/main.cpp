@@ -239,6 +239,42 @@ int test_remove_operator(const T& first, const T& second, const T& third, const 
     return fail_count;
 }
 
+template<typename T>
+int test_array_constructor(const T& first, const T& second, const T& third, const std::string& type_name) {
+    std::cout << "--- Set<" << type_name << ">, array constructor ---\n";
+    int fail_count = 0;
+    const T values1[] = {first, second, third};
+    Set<T> a(values1, sizeof(values1) / sizeof(values1[0]));
+    if (!check_condition(a.size() == 3, "array of three values: size = 3")) {
+        fail_count++;
+    }
+    if (!check_condition(a[0] == first && a[1] == second && a[2] == third, "order of the elements is the same")) {
+        fail_count++;
+    }
+    const T values2[] = {first, second, first, third, second};
+    Set<T> b(values2, sizeof(values2) / sizeof(values2[0]));
+    if (!check_condition(b.size() == 3, "duplicates were not added to the Set")) {
+        fail_count++;
+    }
+    if (!check_condition(b[0] == first && b[1] == second && b[2] == third, "the order of elements is preserved based on their first occurrences")) {
+        fail_count++;
+    }
+    Set<T> c(nullptr, 0);
+    if (!check_condition(c.empty(), "Set created from an empty array is also empty")) {
+        fail_count++;
+    }
+    bool exception_flag = false;
+    try {
+        Set<T> d(nullptr, 5);
+    } catch (const std::invalid_argument&) {
+        exception_flag = true;
+    }
+    if (!check_condition(exception_flag, "constructor throws invalid_argument for null array")) {
+        fail_count++;
+    }
+    return fail_count;
+}
+
 int main() {
     int result_count = 0;
     result_count += test_empty_set<int>(42, "int");
@@ -265,6 +301,10 @@ int main() {
     result_count += test_remove_operator<float>(2.5f, 3.7f, 1.2f, "float");
     result_count += test_remove_operator<std::string>("abc", "cucumber", "def",  "std::string");
     result_count += test_remove_operator<std::pair<int, double>>({1, 4.6}, {4, 1.4}, {2, 3.2}, "std::pair<int, double>");
+    result_count += test_array_constructor<int>(2, 5, 3, "int");
+    result_count += test_array_constructor<float>(2.5f, 3.7f, 1.2f, "float");
+    result_count += test_array_constructor<std::string>("abc", "cucumber", "def",  "std::string");
+    result_count += test_array_constructor<std::pair<int, double>>({1, 4.6}, {4, 1.4}, {2, 3.2}, "std::pair<int, double>");
     std::cout << "\nFailed: " << result_count << "\n";
     if (result_count == 0) {
         return 0;

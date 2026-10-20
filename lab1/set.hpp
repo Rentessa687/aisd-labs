@@ -45,6 +45,14 @@ private:
     }
 public:
     Set() = default;
+    Set(const T* values, std::size_t count) {
+        if (values == nullptr && count > 0) {
+            throw std::invalid_argument("Values pointer is null");
+        }
+        for (std::size_t i = 0; i < count; ++i) {
+            *this += values[i];
+        }
+    }
     Set(const Set& other) {
         data_ = new T[other.size_];
         for (std::size_t i = 0; i < other.size(); ++i) {
