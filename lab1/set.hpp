@@ -19,6 +19,14 @@ private:
             return lhs == rhs;
         }
     }
+    std::size_t find_index(const T& value) const {
+        for (std::size_t idx = 0; idx < size(); ++idx) {
+            if (is_equal(data_[idx], value)) {
+                return idx;
+            }
+        }
+        return size_;
+    }
     void grow() {
         std::size_t new_capacity = 0;
         if (capacity_ == 0) {
@@ -28,7 +36,7 @@ private:
             new_capacity = capacity_ * 2;
         }
         T* new_data = new T[new_capacity];
-        for (std::size_t i = 0; i < size_; ++i) {
+        for (std::size_t i = 0; i < size(); ++i) {
             new_data[i] = data_[i];
         }
         delete[] data_;
@@ -39,24 +47,24 @@ public:
     Set() = default;
     Set(const Set& other) {
         data_ = new T[other.size_];
-        for (std::size_t i = 0; i < other.size_; ++i) {
+        for (std::size_t i = 0; i < other.size(); ++i) {
             data_[i] = other.data_[i];
         }
-        size_ = other.size_;
-        capacity_ = other.size_;
+        size_ = other.size();
+        capacity_ = other.size();
     }
     Set& operator=(const Set& other) {
         if (this == &other) {
             return *this;
         }
-        T* new_data = new T[other.size_];
-        for (std::size_t i = 0; i < other.size_; ++i) {
+        T* new_data = new T[other.size()];
+        for (std::size_t i = 0; i < other.size(); ++i) {
             new_data[i] = other.data_[i];
         }
         delete[] data_;
         data_ = new_data;
-        size_ = other.size_;
-        capacity_ = other.size_;
+        size_ = other.size();
+        capacity_ = other.size();
         return *this;
     }
     ~Set() {
@@ -77,10 +85,8 @@ public:
         }
     }
     bool contains(const T& value) const {
-        for (std::size_t i = 0; i < size(); ++i) {
-            if (is_equal(data_[i], value)) {
-                return true;
-            }
+        if (find_index(value) != size()) {
+            return true;
         }
         return false;
     }
