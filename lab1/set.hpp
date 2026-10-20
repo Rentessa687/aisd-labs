@@ -118,4 +118,9 @@ public:
         --size_;
         return *this;
     }
+    Set operator-(const T& value) const {
+        Set<T> set_copied(*this);
+        set_copied -= value;
+        return set_copied;
+    }
 };

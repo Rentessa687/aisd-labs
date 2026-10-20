@@ -54,7 +54,7 @@ int test_copy(const std::string& type_name) {
     }
 
     Set<T> c(b);
-    if (!check_condition(c.size() == 0, "copy constructor with parenheses")) {
+    if (!check_condition(c.size() == 0, "copy constructor with parentheses")) {
         fail_count++;
     }
 
@@ -131,7 +131,7 @@ int test_add_operator(const T& first, const T& second, const std::string& type_n
     if (!check_condition(b.contains(first), "b contains first")) {
         fail_count++;
     }
-    if (!check_condition(a.size() == 0, "a is empty same")) {
+    if (!check_condition(a.size() == 0, "a is still empty")) {
         fail_count++;
     }
     Set<T> c = b + second;
@@ -144,14 +144,14 @@ int test_add_operator(const T& first, const T& second, const std::string& type_n
     if (!check_condition(c.contains(second), "c contains second")) {
         fail_count++;
     }
-    if (!check_condition(b.size() == 1, "size of b is 1 same")) {
+    if (!check_condition(b.size() == 1, "size of b is still 1")) {
         fail_count++;
     }
     if (!check_condition(!b.contains(second), "b does not contain second")) {
         fail_count++;
     }
-    b + first;
-    if (!check_condition(b.size() == 1, "size of b is 1 after added first")) {
+    Set<T> d = b + first;
+    if (!check_condition(d.size() == 1, "size of d is 1 after added first")) {
         fail_count++;
     }
     return fail_count;
@@ -198,6 +198,47 @@ int test_remove(const T& first, const T& second, const T& third, const std::stri
     return fail_count;
 }
 
+template<typename T>
+int test_remove_operator(const T& first, const T& second, const T& third, const std::string& type_name) {
+    std::cout << "--- Set<" << type_name << ">, remove operator ---\n";
+    int fail_count = 0;
+    Set<T> empty;
+    Set<T> a = empty + first + second + third;
+    Set<T> b = a - second;
+    if (!check_condition(b.size() == 2, "second removed: size = 2")) {
+        fail_count++;
+    }
+    if (!check_condition(!b.contains(second), "b does not contain second")) {
+        fail_count++;
+    }
+    if (!check_condition(a.size() == 3, "size of a is still 3")) {
+        fail_count++;
+    }
+    if (!check_condition(a.contains(second), "a contains second")) {
+        fail_count++;
+    }
+    Set<T> c = b - second;
+    if (!check_condition(c.size() == 2, "removing a missing element keeps the size of c")) {
+        fail_count++;
+    }
+    if (!check_condition(c.contains(first), "c contains first")) {
+        fail_count++;
+    }
+    if (!check_condition(c.contains(third), "c contains third")) {
+        fail_count++;
+    }
+    if (!check_condition(c[0] == first && c[1] == third, "order of elements in c is preserved")) {
+        fail_count++;
+    }
+    if (!check_condition(b.size() == 2, "size of b is 2 same")) {
+        fail_count++;
+    }
+    if (!check_condition(b[0] == first && b[1] == third, "order of elements in b is preserved")) {
+        fail_count++;
+    }
+    return fail_count;
+}
+
 int main() {
     int result_count = 0;
     result_count += test_empty_set<int>(42, "int");
@@ -220,6 +261,10 @@ int main() {
     result_count += test_remove<float>(2.5f, 3.7f, 1.2f, "float");
     result_count += test_remove<std::string>("abc", "cucumber", "def",  "std::string");
     result_count += test_remove<std::pair<int, double>>({1, 4.6}, {4, 1.4}, {2, 3.2}, "std::pair<int, double>");
+    result_count += test_remove_operator<int>(2, 5, 3, "int");
+    result_count += test_remove_operator<float>(2.5f, 3.7f, 1.2f, "float");
+    result_count += test_remove_operator<std::string>("abc", "cucumber", "def",  "std::string");
+    result_count += test_remove_operator<std::pair<int, double>>({1, 4.6}, {4, 1.4}, {2, 3.2}, "std::pair<int, double>");
     std::cout << "\nFailed: " << result_count << "\n";
     if (result_count == 0) {
         return 0;
