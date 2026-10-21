@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <cmath>
 #include <type_traits>
+#include <random>
 
 template <typename T>
 class Set {
@@ -52,6 +53,24 @@ public:
         for (std::size_t i = 0; i < count; ++i) {
             *this += values[i];
         }
+    }
+    Set(std::size_t count, const T& low, const T& high) {
+        if (low > high) {
+            throw std::invalid_argument("Low value more than high value");
+        }
+        if constexpr (std::is_integral_v<T>) {
+            std::size_t distinct_values = static_cast<std::size_t>(high) - static_cast<std::size_t>(low) + 1;
+            if (count > distinct_values) {
+                throw std::invalid_argument("Value of count more than distance");
+            }
+        }
+        using distribution_type = std::conditional_t<std::is_floating_point_v<T>, std::uniform_real_distribution<T>, std::uniform_int_distribution<T>>;
+            std::random_device device;
+            std::mt19937 engine(device());
+            distribution_type distribution(low, high);
+            while (size() < count) {
+                *this += distribution(engine);
+            }
     }
     Set(const Set& other) {
         data_ = new T[other.size_];

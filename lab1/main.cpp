@@ -275,6 +275,50 @@ int test_array_constructor(const T& first, const T& second, const T& third, cons
     return fail_count;
 }
 
+template<typename T>
+int test_random_constructor(const T& low, const T& high, const std::string& type_name) {
+    std::cout << "--- Set<" << type_name << ">, random constructor ---\n";
+    int fail_count = 0;
+    Set<T> a(5, low, high);
+    if (!check_condition(a.size() == 5, "size equals count")) {
+        fail_count++;
+    }
+    bool out_of_range_flag = false;
+    for (std::size_t i = 0; i < a.size(); ++i) {
+        if (a[i] < low || a[i] > high) {
+            out_of_range_flag = true;
+        }
+    }
+    if (!check_condition(!out_of_range_flag, "all values are within [low, high]")) {
+        fail_count++;
+    }
+    bool exception_flag = false;
+    try {
+        Set<T> b(5, high, low);
+    } catch (const std::invalid_argument&) {
+        exception_flag = true;
+    }
+    if (!check_condition(exception_flag, "constructor throws invalid_argument when low is greater than high")) {
+        fail_count++;
+    }
+    return fail_count;
+}
+
+int test_random_constructor_int_range() {
+    std::cout << "--- Set<int>, random constructor range ---\n";
+    int fail_count = 0;
+    bool exception_flag = false;
+    try {
+        Set<int> b(5, 1, 3);
+    } catch (const std::invalid_argument&) {
+        exception_flag = true;
+    }
+    if (!check_condition(exception_flag, "constructor throws invalid_argument when count exceeds the number of values in range")) {
+        fail_count++;
+    }
+    return fail_count;
+}
+
 int main() {
     int result_count = 0;
     result_count += test_empty_set<int>(42, "int");
@@ -305,6 +349,9 @@ int main() {
     result_count += test_array_constructor<float>(2.5f, 3.7f, 1.2f, "float");
     result_count += test_array_constructor<std::string>("abc", "cucumber", "def",  "std::string");
     result_count += test_array_constructor<std::pair<int, double>>({1, 4.6}, {4, 1.4}, {2, 3.2}, "std::pair<int, double>");
+    result_count += test_random_constructor<int>(1, 100, "int");
+    result_count += test_random_constructor<float>(0.0f, 10.0f, "float");
+    result_count += test_random_constructor_int_range();
     std::cout << "\nFailed: " << result_count << "\n";
     if (result_count == 0) {
         return 0;
