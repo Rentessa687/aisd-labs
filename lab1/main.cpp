@@ -319,6 +319,53 @@ int test_random_constructor_int_range() {
     return fail_count;
 }
 
+template<typename T>
+int test_union(const T& first, const T& second, const T& third, const std::string& type_name) {
+    std::cout << "--- Set<" << type_name << ">, union ---\n";
+    int fail_count = 0;
+    Set<T> a;
+    a += first;
+    a += second;
+    Set<T> b;
+    b += second;
+    b += third;
+    Set<T> c;
+    c = a + b;
+    if (!check_condition(c.size() == 3, "size of c is 3")) {
+        fail_count++;
+    }
+    if (!check_condition(c[0] == first && c[1] == second && c[2] == third , "order of elements in c is preserved")) {
+        fail_count++;
+    }
+    if (!check_condition(a.size() == 2 && b.size() == 2, "a and b have not changed")) {
+        fail_count++;
+    }
+    Set<T> empty_set;
+    Set<T> d;
+    d = a + empty_set;
+    Set<T> e;
+    e = empty_set + a;
+    if (!check_condition(a.size() == d.size() && a.size() == e.size(), "union with an empty set yields a set of the same size")) {
+        fail_count++;
+    }
+    if (!check_condition(a[0] == d[0] && a[1] == d[1], "order of elements in d is preserved")) {
+        fail_count++;
+    }
+    if (!check_condition(a[0] == e[0] && a[1] == e[1], "order of elements in e is preserved")) {
+        fail_count++;
+    }
+    Set<T> f;
+    f = a + b + c;
+    if (!check_condition(f.size() == 3, "size of f is 3")) {
+        fail_count++;
+    }
+    Set<T> g = a + a;
+    if (!check_condition(g.size() == 2, "size of g is 2")) {
+        fail_count++;
+    }
+    return fail_count;
+}
+
 int main() {
     int result_count = 0;
     result_count += test_empty_set<int>(42, "int");
@@ -352,6 +399,10 @@ int main() {
     result_count += test_random_constructor<int>(1, 100, "int");
     result_count += test_random_constructor<float>(0.0f, 10.0f, "float");
     result_count += test_random_constructor_int_range();
+    result_count += test_union<int>(2, 5, 3, "int");
+    result_count += test_union<float>(2.5f, 3.7f, 1.2f, "float");
+    result_count += test_union<std::string>("abc", "cucumber", "def", "std::string");
+    result_count += test_union<std::pair<int, double>>({1, 4.6}, {4, 1.4}, {2, 3.2}, "std::pair<int, double>");
     std::cout << "\nFailed: " << result_count << "\n";
     if (result_count == 0) {
         return 0;
