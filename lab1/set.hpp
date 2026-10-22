@@ -224,3 +224,24 @@ template <typename T>
 bool is_superset(const Set<T>& a, const Set<T>& b) {
     return is_subset(b, a);
 }
+
+enum class SetRelation {
+    equal,
+    subset,
+    superset,
+    no_nesting
+};
+
+template <typename T>
+SetRelation get_relation(const Set<T>& a, const Set<T>& b) {
+    if (a == b) {
+        return SetRelation::equal;
+    }
+    if (is_subset(a, b)) {
+        return SetRelation::subset;
+    }
+    if (is_superset(a, b)) {
+        return SetRelation::superset;
+    }
+    return SetRelation::no_nesting;
+}

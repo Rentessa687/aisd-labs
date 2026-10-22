@@ -614,6 +614,60 @@ int test_task(const T& first, const T& second, const T& third, const std::string
     return fail_count;
 }
 
+template<typename T>
+int test_relation(const T& first, const T& second, const T& third, const std::string& type_name) {
+    std::cout << "--- Set<" << type_name << ">, relation ---\n";
+    int fail_count = 0;
+    Set<T> a;
+    a += first;
+    a += second;
+    a += third;
+    Set<T> b;
+    b += third;
+    b += first;
+    b += second;
+    if (!check_condition(get_relation(a, b) == SetRelation::equal, "a equals b")) {
+        fail_count++;
+    }
+    if (!check_condition(get_relation(b, a) == SetRelation::equal, "b equals a")) {
+        fail_count++;
+    }
+    a -= third;
+    if (!check_condition(get_relation(a, b) == SetRelation::subset, "a is subset b")) {
+        fail_count++;
+    }
+    if (!check_condition(get_relation(b, a) == SetRelation::superset, "b is superset a")) {
+        fail_count++;
+    }
+    Set<T> c;
+    c += first;
+    c += second;
+    Set<T> d;
+    d += second;
+    d += third;
+    if (!check_condition(get_relation(c, d) == SetRelation::no_nesting, "c and d are not nested")) {
+        fail_count++;
+    }
+    if (!check_condition(get_relation(d, c) == SetRelation::no_nesting, "d and c are not nested")) {
+        fail_count++;
+    }
+    Set<T> empty_set_1;
+    if (!check_condition(get_relation(empty_set_1, a) == SetRelation::subset, "empty set is subset a")) {
+        fail_count++;
+    }
+    if (!check_condition(get_relation(a, empty_set_1) == SetRelation::superset, "empty set is superset a")) {
+        fail_count++;
+    }
+    Set<T> empty_set_2;
+    if (!check_condition(get_relation(empty_set_1, empty_set_2) == SetRelation::equal, "empty set equals empty set")) {
+        fail_count++;
+    }
+    if (!check_condition(get_relation(a, a) == SetRelation::equal, "a equals a")) {
+        fail_count++;
+    }
+    return fail_count;
+}
+
 int main() {
     int result_count = 0;
     result_count += test_empty_set<int>(42, "int");
@@ -667,6 +721,10 @@ int main() {
     result_count += test_task<float>(2.5f, 3.7f, 1.2f, "float");
     result_count += test_task<std::string>("abc", "cucumber", "def",  "std::string");
     result_count += test_task<std::pair<int, double>>({1, 4.6}, {4, 1.4}, {2, 3.2}, "std::pair<int, double>");
+    result_count += test_relation<int>(2, 5, 3, "int");
+    result_count += test_relation<float>(2.5f, 3.7f, 1.2f, "float");
+    result_count += test_relation<std::string>("abc", "cucumber", "def",  "std::string");
+    result_count += test_relation<std::pair<int, double>>({1, 4.6}, {4, 1.4}, {2, 3.2}, "std::pair<int, double>");
     Set<int> empty_set;
     std::cout << empty_set << "\n";
     Set<float> a;
