@@ -4,6 +4,7 @@
 #include <cmath>
 #include <type_traits>
 #include <random>
+#include <ostream>
 
 template <typename T>
 class Set {
@@ -188,3 +189,16 @@ public:
         return !(*this == other);
     }
 };
+
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const Set<T>& set) {
+    os << "{";
+    for (std::size_t i = 0; i < set.size(); ++i) {
+        if (i > 0) {
+            os << ", ";
+        }
+        os << set[i];
+    }
+    os << "}";
+    return os;
+}

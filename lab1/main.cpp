@@ -589,6 +589,16 @@ int main() {
     result_count += test_equality<float>(2.5f, 3.7f, 1.2f, "float");
     result_count += test_equality<std::string>("abc", "cucumber", "def",  "std::string");
     result_count += test_equality<std::pair<int, double>>({1, 4.6}, {4, 1.4}, {2, 3.2}, "std::pair<int, double>");
+    Set<int> empty_set;
+    std::cout << empty_set << "\n";
+    Set<float> a;
+    a += 8.7f;
+    std::cout << a << "\n";
+    Set<std::string> b;
+    b += "samara";
+    b += "Egor";
+    b += "aisd";
+    std::cout << b << "\n";
     std::cout << "\nFailed: " << result_count << "\n";
     if (result_count == 0) {
         return 0;
