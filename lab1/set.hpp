@@ -64,7 +64,7 @@ public:
                 throw std::invalid_argument("Value of count more than distance");
             }
         }
-        using distribution_type = std::conditional_t<std::is_floating_point_v<T>, std::uniform_real_distribution<T>, std::uniform_int_distribution<T>>;
+            using distribution_type = std::conditional_t<std::is_floating_point_v<T>, std::uniform_real_distribution<T>, std::uniform_int_distribution<T>>;
             std::random_device device;
             std::mt19937 engine(device());
             distribution_type distribution(low, high);
@@ -163,5 +163,14 @@ public:
             set_copied -= other[i];
         }
         return set_copied;
+    }
+    Set intersection(const Set& other) const {
+        Set<T> result;
+        for (std::size_t i = 0; i < size(); ++i) {
+            if (other.contains((*this)[i])) {
+                result += (*this)[i];
+            }
+        }
+        return result;
     }
 };

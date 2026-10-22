@@ -429,6 +429,71 @@ int test_difference(const T& first, const T& second, const T& third, const T& fo
     return fail_count;
 }
 
+template<typename T>
+int test_intersection(const T& first, const T& second, const T& third, const T& fourth, const std::string& type_name) {
+    std::cout << "--- Set<" << type_name << ">, intersection ---\n";
+    int fail_count = 0;
+    Set<T> a;
+    a += first;
+    a += second;
+    a += third;
+    Set<T> b;
+    b += third;
+    b += second;
+    b += fourth;
+    Set<T> c;
+    c = a.intersection(b);
+    if (!check_condition(c.size() == 2, "size of c is 2")) {
+        fail_count++;
+    }
+    if (!check_condition(c[0] == second && c[1] == third, "order of elements in c is preserved")) {
+        fail_count++;
+    }
+    Set<T> d;
+    d = b.intersection(a);
+    if (!check_condition(d.size() == 2, "size of d is 2")) {
+        fail_count++;
+    }
+    if (!check_condition(d[0] == third && d[1] == second, "order of elements in d is preserved")) {
+        fail_count++;
+    }
+    Set<T> set_of_first;
+    set_of_first += first;
+    Set<T> set_of_fourth;
+    set_of_fourth += fourth;
+    Set<T> e;
+    e = set_of_first.intersection(set_of_fourth);
+    if (!check_condition(e.empty(), "e is empty")) {
+        fail_count++;
+    }
+    Set<T> f;
+    f = a.intersection(a);
+    if (!check_condition(f.size() == a.size(), "size of f and a is equal")) {
+        fail_count++;
+    }
+    if (!check_condition(f[0] == a[0] && f[1] == a[1] && f[2] == a[2], "order of elements in f is preserved")) {
+        fail_count++;
+    }
+    Set<T> empty_set;
+    Set<T> g;
+    g = a.intersection(empty_set);
+    if (!check_condition(g.empty(), "g is empty")) {
+        fail_count++;
+    }
+    Set<T> h;
+    h = empty_set.intersection(a);
+    if (!check_condition(h.empty(), "h is empty")) {
+        fail_count++;
+    }
+    if (!check_condition(a.size() == 3, "size of a is still 3")) {
+        fail_count++;
+    }
+    if (!check_condition(b.size() == 3, "size of b is still 3")) {
+        fail_count++;
+    }
+    return fail_count;
+}
+
 int main() {
     int result_count = 0;
     result_count += test_empty_set<int>(42, "int");
@@ -470,6 +535,10 @@ int main() {
     result_count += test_difference<float>(2.5f, 3.7f, 1.2f, 4.2f, "float");
     result_count += test_difference<std::string>("abc", "cucumber", "def", "samara", "std::string");
     result_count += test_difference<std::pair<int, double>>({1, 4.6}, {4, 1.4}, {2, 3.2}, {12, 10.3}, "std::pair<int, double>");
+    result_count += test_intersection<int>(2, 5, 3, 7, "int");
+    result_count += test_intersection<float>(2.5f, 3.7f, 1.2f, 4.2f, "float");
+    result_count += test_intersection<std::string>("abc", "cucumber", "def", "samara", "std::string");
+    result_count += test_intersection<std::pair<int, double>>({1, 4.6}, {4, 1.4}, {2, 3.2}, {12, 10.3}, "std::pair<int, double>");
     std::cout << "\nFailed: " << result_count << "\n";
     if (result_count == 0) {
         return 0;
