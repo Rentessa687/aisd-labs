@@ -157,4 +157,11 @@ public:
         set_copied -= value;
         return set_copied;
     }
+    Set operator-(const Set& other) const {
+        Set<T> set_copied(*this);
+        for (std::size_t i = 0; i < other.size(); ++i) {
+            set_copied -= other[i];
+        }
+        return set_copied;
+    }
 };

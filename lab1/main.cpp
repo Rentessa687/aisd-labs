@@ -366,6 +366,69 @@ int test_union(const T& first, const T& second, const T& third, const std::strin
     return fail_count;
 }
 
+template<typename T>
+int test_difference(const T& first, const T& second, const T& third, const T& fourth, const std::string& type_name) {
+    std::cout << "--- Set<" << type_name << ">, difference ---\n";
+    int fail_count = 0;
+    Set<T> a;
+    a += first;
+    a += second;
+    a += third;
+    Set<T> b;
+    b += second;
+    b += third;
+    b += fourth;
+    Set<T> c;
+    c = a - b;
+    if (!check_condition(c.size() == 1, "size of c is 1")) {
+        fail_count++;
+    }
+    if (!check_condition(c[0] == first, "c contains only first")) {
+        fail_count++;
+    }
+    Set<T> d;
+    d = b - a;
+    if (!check_condition(d.size() == 1, "size of d is 1")) {
+        fail_count++;
+    }
+    if (!check_condition(d[0] == fourth, "d contains only fourth")) {
+        fail_count++;
+    }
+    Set<T> second_set;
+    second_set += second;
+    Set<T> e;
+    e = a - second_set;
+    if (!check_condition(e[0] == first && e[1] == third, "order of elements in e is preserved")) {
+        fail_count++;
+    }
+    if (!check_condition(a.size() == 3, "size of a is still 3")) {
+        fail_count++;
+    }
+    if (!check_condition(b.size() == 3, "size of b is still 3")) {
+        fail_count++;
+    }
+    Set<T> f;
+    f = a - a;
+    if (!check_condition(f.empty(), "f is empty")) {
+        fail_count++;
+    }
+    Set<T> empty_set;
+    Set<T> g;
+    g = a - empty_set;
+    if (!check_condition(g.size() == a.size(), "size of g and a is equal")) {
+        fail_count++;
+    }
+    if (!check_condition(g[0] == a[0] && g[1] == a[1] && g[2] == a[2], "order of elements in g is preserved")) {
+        fail_count++;
+    }
+    Set<T> h;
+    h = empty_set - a;
+    if (!check_condition(h.empty(), "h is empty")) {
+        fail_count++;
+    }
+    return fail_count;
+}
+
 int main() {
     int result_count = 0;
     result_count += test_empty_set<int>(42, "int");
@@ -403,6 +466,10 @@ int main() {
     result_count += test_union<float>(2.5f, 3.7f, 1.2f, "float");
     result_count += test_union<std::string>("abc", "cucumber", "def", "std::string");
     result_count += test_union<std::pair<int, double>>({1, 4.6}, {4, 1.4}, {2, 3.2}, "std::pair<int, double>");
+    result_count += test_difference<int>(2, 5, 3, 7, "int");
+    result_count += test_difference<float>(2.5f, 3.7f, 1.2f, 4.2f, "float");
+    result_count += test_difference<std::string>("abc", "cucumber", "def", "samara", "std::string");
+    result_count += test_difference<std::pair<int, double>>({1, 4.6}, {4, 1.4}, {2, 3.2}, {12, 10.3}, "std::pair<int, double>");
     std::cout << "\nFailed: " << result_count << "\n";
     if (result_count == 0) {
         return 0;
