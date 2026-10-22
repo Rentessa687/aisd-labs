@@ -191,9 +191,9 @@ public:
     }
 };
 
-template <typename first, typename second>
-std::ostream& operator<<(std::ostream& os, const std::pair<first, second>& pair) {
-    os << "(" << pair.first << ", " << pair.second << ")";
+template <typename First, typename Second>
+std::ostream& operator<<(std::ostream& os, const std::pair<First, Second>& value) {
+    os << "(" << value.first << ", " << value.second << ")";
     return os;
 }
 
