@@ -5,6 +5,7 @@
 #include <type_traits>
 #include <random>
 #include <ostream>
+#include <utility>
 
 template <typename T>
 class Set {
@@ -189,6 +190,12 @@ public:
         return !(*this == other);
     }
 };
+
+template <typename first, typename second>
+std::ostream& operator<<(std::ostream& os, const std::pair<first, second>& pair) {
+    os << "(" << pair.first << ", " << pair.second << ")";
+    return os;
+}
 
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const Set<T>& set) {

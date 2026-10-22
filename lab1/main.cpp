@@ -599,6 +599,11 @@ int main() {
     b += "Egor";
     b += "aisd";
     std::cout << b << "\n";
+    Set<std::pair<int, double>> c;
+    c += {1, 2.3};
+    c += {6, 5.4};
+    c += {41, 18.9};
+    std::cout << c << "\n";
     std::cout << "\nFailed: " << result_count << "\n";
     if (result_count == 0) {
         return 0;
