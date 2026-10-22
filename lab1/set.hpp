@@ -64,13 +64,13 @@ public:
                 throw std::invalid_argument("Value of count more than distance");
             }
         }
-            using distribution_type = std::conditional_t<std::is_floating_point_v<T>, std::uniform_real_distribution<T>, std::uniform_int_distribution<T>>;
-            std::random_device device;
-            std::mt19937 engine(device());
-            distribution_type distribution(low, high);
-            while (size() < count) {
-                *this += distribution(engine);
-            }
+        using distribution_type = std::conditional_t<std::is_floating_point_v<T>, std::uniform_real_distribution<T>, std::uniform_int_distribution<T>>;
+        std::random_device device;
+        std::mt19937 engine(device());
+        distribution_type distribution(low, high);
+        while (size() < count) {
+            *this += distribution(engine);
+        }
     }
     Set(const Set& other) {
         data_ = new T[other.size_];
@@ -172,5 +172,19 @@ public:
             }
         }
         return result;
+    }
+    bool operator==(const Set& other) const {
+        if (size() != other.size()) {
+            return false;
+        }
+        for (std::size_t i = 0; i < size(); ++i) {
+            if (!other.contains((*this)[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+    bool operator!=(const Set& other) const {
+        return !(*this == other);
     }
 };

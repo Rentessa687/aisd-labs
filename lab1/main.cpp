@@ -494,6 +494,52 @@ int test_intersection(const T& first, const T& second, const T& third, const T& 
     return fail_count;
 }
 
+template<typename T>
+int test_equality(const T& first, const T& second, const T& third, const std::string& type_name) {
+    std::cout << "--- Set<" << type_name << ">, equality ---\n";
+    int fail_count = 0;
+    Set<T> a;
+    a += first;
+    a += second;
+    a += third;
+    Set<T> b;
+    b += third;
+    b += first;
+    b += second;
+    if (!check_condition(a == b, "a is equal b")) {
+        fail_count++;
+    }
+    if (!check_condition(!(a != b), "a is not equal b is false")) {
+        fail_count++;
+    }
+    Set<T> c;
+    c += first;
+    c += second;
+    if (!check_condition(!(a == c), "a is equal c is false")) {
+        fail_count++;
+    }
+    if (!check_condition(a != c, "a is not equal c")) {
+        fail_count++;
+    }
+    Set<T> empty_set_1;
+    Set<T> empty_set_2;
+    if (!check_condition(empty_set_1 == empty_set_2, "empty sets are equal")) {
+        fail_count++;
+    }
+    if (!check_condition(a == a, "identical sets are equal")) {
+        fail_count++;
+    }
+    c = a;
+    c -= first;
+    if (!check_condition(a != c, "a is not equal c")) {
+        fail_count++;
+    }
+    c += first;
+    if (!check_condition(a == c, "the order of elements does not affect equality")) {
+        fail_count++;
+    }
+    return fail_count;
+}
 int main() {
     int result_count = 0;
     result_count += test_empty_set<int>(42, "int");
@@ -539,6 +585,10 @@ int main() {
     result_count += test_intersection<float>(2.5f, 3.7f, 1.2f, 4.2f, "float");
     result_count += test_intersection<std::string>("abc", "cucumber", "def", "samara", "std::string");
     result_count += test_intersection<std::pair<int, double>>({1, 4.6}, {4, 1.4}, {2, 3.2}, {12, 10.3}, "std::pair<int, double>");
+    result_count += test_equality<int>(2, 5, 3, "int");
+    result_count += test_equality<float>(2.5f, 3.7f, 1.2f, "float");
+    result_count += test_equality<std::string>("abc", "cucumber", "def",  "std::string");
+    result_count += test_equality<std::pair<int, double>>({1, 4.6}, {4, 1.4}, {2, 3.2}, "std::pair<int, double>");
     std::cout << "\nFailed: " << result_count << "\n";
     if (result_count == 0) {
         return 0;
