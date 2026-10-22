@@ -540,6 +540,44 @@ int test_equality(const T& first, const T& second, const T& third, const std::st
     }
     return fail_count;
 }
+
+template<typename T>
+int test_task(const T& first, const T& second, const T& third, const std::string& type_name) {
+    std::cout << "--- Set<" << type_name << ">, task ---\n";
+    int fail_count = 0;
+    Set<T> a;
+    a += first;
+    a += second;
+    Set<T> b;
+    b += second;
+    b += first;
+    b += third;
+    if (!check_condition(is_subset(a, b), "a is subset b")) {
+        fail_count++;
+    }
+    if (!check_condition(!is_superset(a, b), "a is not superset b")) {
+        fail_count++;
+    }
+    Set<T> empty_set;
+    if (!check_condition(is_subset(empty_set, a), "empty set is subset a")) {
+        fail_count++;
+    }
+    if (!check_condition(is_subset(empty_set, b), "empty set is subset b")) {
+        fail_count++;
+    }
+    Set<T> c;
+    c += third;
+    c += first;
+    c += second;
+    if (!check_condition(is_subset(c, b), "c is subset b")) {
+        fail_count++;
+    }
+    if (!check_condition(is_superset(c, b), "c is superset b")) {
+        fail_count++;
+    }
+    return fail_count;
+}
+
 int main() {
     int result_count = 0;
     result_count += test_empty_set<int>(42, "int");
@@ -589,6 +627,10 @@ int main() {
     result_count += test_equality<float>(2.5f, 3.7f, 1.2f, "float");
     result_count += test_equality<std::string>("abc", "cucumber", "def",  "std::string");
     result_count += test_equality<std::pair<int, double>>({1, 4.6}, {4, 1.4}, {2, 3.2}, "std::pair<int, double>");
+    result_count += test_task<int>(2, 5, 3, "int");
+    result_count += test_task<float>(2.5f, 3.7f, 1.2f, "float");
+    result_count += test_task<std::string>("abc", "cucumber", "def",  "std::string");
+    result_count += test_task<std::pair<int, double>>({1, 4.6}, {4, 1.4}, {2, 3.2}, "std::pair<int, double>");
     Set<int> empty_set;
     std::cout << empty_set << "\n";
     Set<float> a;

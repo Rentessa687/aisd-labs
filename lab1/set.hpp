@@ -209,3 +209,18 @@ std::ostream& operator<<(std::ostream& os, const Set<T>& set) {
     os << "}";
     return os;
 }
+
+template <typename T>
+bool is_subset(const Set<T>& a, const Set<T>& b) {
+    for (std::size_t i = 0; i < a.size(); ++i) {
+        if (!b.contains(a[i])) {
+            return false;
+        }
+    }
+    return true;
+}
+
+template <typename T>
+bool is_superset(const Set<T>& a, const Set<T>& b) {
+    return is_subset(b, a);
+}
