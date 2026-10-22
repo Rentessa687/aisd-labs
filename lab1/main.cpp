@@ -668,6 +668,71 @@ int test_relation(const T& first, const T& second, const T& third, const std::st
     return fail_count;
 }
 
+void run_demo() {
+    std::cout << std::boolalpha;
+    std::cout << "=== Demonstration on random sets ===\n";
+    Set<int> a(6, 1, 15);
+    Set<int> b(6, 1, 15);
+    std::cout << "a = " << a << "\n";
+    std::cout << "b = " << b << "\n";
+    std::cout << "a.size() = " << a.size() << "\n";
+    std::cout << "a.empty() = " << a.empty() << "\n";
+    std::cout << "a[0] = " << a[0] << "\n";
+    std::cout << "a.contains(a[0]) = " << a.contains(a[0]) << "\n";
+    std::cout << "a.contains(100) = " << a.contains(100) << "\n";
+    try {
+        std::cout << a[a.size()] << "\n";
+    } catch (const std::out_of_range& error) {
+        std::cout << "a[a.size()] throws: " << error.what() << "\n";
+    }
+    Set<int> copied = a;
+    std::cout << "copy of a = " << copied << "\n";
+    Set<int> assigned;
+    assigned = b;
+    std::cout << "assignment from b = " << assigned << "\n";
+    const int values[] = {4, 8, 4, 15};
+    Set<int> from_array(values, sizeof(values) / sizeof(values[0]));
+    std::cout << "set from array {4, 8, 4, 15} = " << from_array << "\n";
+    std::cout << "a + 100 = " << a + 100 << "\n";
+    std::cout << "a - a[0] = " << a - a[0] << "\n";
+    Set<int> modified = a;
+    modified += 100;
+    std::cout << "copy of a after += 100 = " << modified << "\n";
+    modified -= 100;
+    std::cout << "copy of a after -= 100 = " << modified << "\n";
+    std::cout << "a = " << a << " (unchanged)\n";
+    std::cout << "a + b = " << a + b << "\n";
+    std::cout << "a - b = " << a - b << "\n";
+    std::cout << "a.intersection(b) = " << a.intersection(b) << "\n";
+    std::cout << "a == b: " << (a == b) << "\n";
+    std::cout << "a != b: " << (a != b) << "\n";
+    std::cout << "a == copy of a: " << (a == copied) << "\n";
+    std::cout << "--- Relations between sets ---\n";
+    Set<int> common = a.intersection(b);
+    Set<int> united = a + b;
+    std::cout << "is_subset(a, b) = " << is_subset(a, b) << "\n";
+    std::cout << "is_superset(a, b) = " << is_superset(a, b) << "\n";
+    std::cout << "relation(a, b) = " << relation_to_string(get_relation(a, b)) << "\n";
+    std::cout << "relation(a, copy of a) = " << relation_to_string(get_relation(a, copied)) << "\n";
+    std::cout << "relation(a.intersection(b), a) = " << relation_to_string(get_relation(common, a)) << "\n";
+    std::cout << "relation(a, a + b) = " << relation_to_string(get_relation(a, united)) << "\n";
+    std::cout << "relation(a + b, a) = " << relation_to_string(get_relation(united, a)) << "\n";
+    std::cout << "--- Other element types ---\n";
+    Set<float> floats;
+    floats += 1.5f;
+    floats += 2.5f;
+    std::cout << "Set<float> = " << floats << "\n";
+    Set<std::string> strings;
+    strings += "samara";
+    strings += "aisd";
+    std::cout << "Set<std::string> = " << strings << "\n";
+    Set<std::pair<int, double>> pairs;
+    pairs += {1, 2.3};
+    pairs += {6, 5.4};
+    std::cout << "Set<std::pair<int, double>> = " << pairs << "\n";
+    std::cout << std::noboolalpha;
+}
+
 int main() {
     int result_count = 0;
     result_count += test_empty_set<int>(42, "int");
@@ -725,21 +790,7 @@ int main() {
     result_count += test_relation<float>(2.5f, 3.7f, 1.2f, "float");
     result_count += test_relation<std::string>("abc", "cucumber", "def",  "std::string");
     result_count += test_relation<std::pair<int, double>>({1, 4.6}, {4, 1.4}, {2, 3.2}, "std::pair<int, double>");
-    Set<int> empty_set;
-    std::cout << empty_set << "\n";
-    Set<float> a;
-    a += 8.7f;
-    std::cout << a << "\n";
-    Set<std::string> b;
-    b += "samara";
-    b += "Egor";
-    b += "aisd";
-    std::cout << b << "\n";
-    Set<std::pair<int, double>> c;
-    c += {1, 2.3};
-    c += {6, 5.4};
-    c += {41, 18.9};
-    std::cout << c << "\n";
+    run_demo();
     std::cout << "\nFailed: " << result_count << "\n";
     if (result_count == 0) {
         return 0;
