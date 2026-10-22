@@ -6,6 +6,7 @@
 #include <random>
 #include <ostream>
 #include <utility>
+#include <string>
 
 template <typename T>
 class Set {
@@ -244,4 +245,18 @@ SetRelation get_relation(const Set<T>& a, const Set<T>& b) {
         return SetRelation::superset;
     }
     return SetRelation::no_nesting;
+}
+
+inline std::string relation_to_string(SetRelation relation) {
+    switch (relation) {
+        case SetRelation::equal:
+            return "equal";
+        case SetRelation::subset:
+            return "subset";
+        case SetRelation::superset:
+            return "superset";
+        case SetRelation::no_nesting:
+            return "no nesting";
+    }
+    return "unknown";
 }
