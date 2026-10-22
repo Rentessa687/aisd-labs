@@ -558,11 +558,17 @@ int test_task(const T& first, const T& second, const T& third, const std::string
     if (!check_condition(!is_superset(a, b), "a is not superset b")) {
         fail_count++;
     }
-    Set<T> empty_set;
-    if (!check_condition(is_subset(empty_set, a), "empty set is subset a")) {
+    if (!check_condition(!is_subset(b, a), "b is not subset a")) {
         fail_count++;
     }
-    if (!check_condition(is_subset(empty_set, b), "empty set is subset b")) {
+    if (!check_condition(is_superset(b, a), "b is superset a")) {
+        fail_count++;
+    }
+    Set<T> empty_set_1;
+    if (!check_condition(is_subset(empty_set_1, a), "empty set is subset a")) {
+        fail_count++;
+    }
+    if (!check_condition(is_subset(empty_set_1, b), "empty set is subset b")) {
         fail_count++;
     }
     Set<T> c;
@@ -573,6 +579,36 @@ int test_task(const T& first, const T& second, const T& third, const std::string
         fail_count++;
     }
     if (!check_condition(is_superset(c, b), "c is superset b")) {
+        fail_count++;
+    }
+    Set<T> d;
+    d += first;
+    d += second;
+    Set<T> e;
+    e += second;
+    e += third;
+    if (!check_condition(!is_subset(e, d), "e is not subset d")) {
+        fail_count++;
+    }
+    if (!check_condition(!is_superset(e, d), "e is not superset d")) {
+        fail_count++;
+    }
+    Set<T> f;
+    f += first;
+    Set<T> g;
+    g += second;
+    g += third;
+    if (!check_condition(!is_subset(f, g), "f is not subset g")) {
+        fail_count++;
+    }
+    if (!check_condition(!is_superset(f, g), "f is not superset g")) {
+        fail_count++;
+    }
+    Set<T> empty_set_2;
+    if (!check_condition(is_subset(empty_set_1, empty_set_2), "empty set is subset of empty set")) {
+        fail_count++;
+    }
+    if (!check_condition(is_superset(empty_set_1, empty_set_2), "empty set is superset of empty set")) {
         fail_count++;
     }
     return fail_count;
