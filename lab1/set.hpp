@@ -83,6 +83,10 @@ public:
         size_ = other.size();
         capacity_ = other.size();
     }
+    explicit Set(std::size_t capacity) {
+        data_ = new T[capacity];
+        capacity_ = capacity;
+    }
     Set& operator=(const Set& other) {
         if (this == &other) {
             return *this;
@@ -168,7 +172,7 @@ public:
         return set_copied;
     }
     Set intersection(const Set& other) const {
-        Set<T> result;
+        Set<T> result(size() + other.size());
         for (std::size_t i = 0; i < size(); ++i) {
             if (other.contains((*this)[i])) {
                 result += (*this)[i];
