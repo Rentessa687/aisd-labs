@@ -15,6 +15,7 @@ private:
     std::size_t size_ = 0;
     std::size_t capacity_ = 0;
     static constexpr double epsilon = 0.000001;
+    static constexpr std::size_t random_string_length = 3;
     static bool is_equal(const T& lhs, const T& rhs) {
         if constexpr (std::is_floating_point_v<T>) {
             return std::abs(lhs - rhs) < epsilon;
@@ -58,6 +59,9 @@ public:
         }
     }
     Set(std::size_t count, const T& low, const T& high) {
+    std::random_device device;
+    std::mt19937 engine(device());
+    if constexpr (std::is_arithmetic_v<T>) {
         if (low > high) {
             throw std::invalid_argument("Low value more than high value");
         }
@@ -68,13 +72,46 @@ public:
             }
         }
         using distribution_type = std::conditional_t<std::is_floating_point_v<T>, std::uniform_real_distribution<T>, std::uniform_int_distribution<T>>;
-        std::random_device device;
-        std::mt19937 engine(device());
         distribution_type distribution(low, high);
         while (size() < count) {
             *this += distribution(engine);
         }
     }
+    else if constexpr (std::is_same_v<T, std::string>) {
+        if (low.empty() || high.empty() || low[0] > high[0]) {
+            throw std::invalid_argument("Bounds must be non-empty and low must not exceed high");
+        }
+        std::size_t alphabet_size = static_cast<std::size_t>(high[0] - low[0]) + 1;
+        std::size_t distinct_values = 1;
+        for (std::size_t i = 0; i < random_string_length; ++i) {
+            distinct_values *= alphabet_size;
+        }
+        if (count > distinct_values) {
+            throw std::invalid_argument("Value of count more than distance");
+        }
+        std::uniform_int_distribution<int> letter_distribution(low[0], high[0]);
+        while (size() < count) {
+            std::string value(random_string_length, low[0]);
+            for (char& letter : value) {
+                letter = static_cast<char>(letter_distribution(engine));
+            }
+            *this += value;
+        }
+    }
+    else if constexpr (std::is_same_v<T, std::pair<int, double>>) {
+        if (low.first > high.first || low.second > high.second) {
+            throw std::invalid_argument("Low value more than high value");
+        }
+        if (low.second == high.second && count > static_cast<std::size_t>(high.first - low.first) + 1) {
+            throw std::invalid_argument("Value of count more than distance");
+        }
+        std::uniform_int_distribution<int> first_distribution(low.first, high.first);
+        std::uniform_real_distribution<double> second_distribution(low.second, high.second);
+        while (size() < count) {
+            *this += std::pair<int, double>(first_distribution(engine), second_distribution(engine));
+        }
+    }
+}
     Set(const Set& other) {
         data_ = new T[other.size_];
         for (std::size_t i = 0; i < other.size(); ++i) {

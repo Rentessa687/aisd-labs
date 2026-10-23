@@ -730,6 +730,10 @@ void run_demo() {
     pairs += {1, 2.3};
     pairs += {6, 5.4};
     std::cout << "Set<std::pair<int, double>> = " << pairs << "\n";
+    Set<std::string> random_strings(3, "a", "e");
+    std::cout << "random Set<std::string> = " << random_strings << "\n";
+    Set<std::pair<int, double>> random_pairs(3, {1, 0.5}, {10, 2.5});
+    std::cout << "random Set<std::pair<int, double>> = " << random_pairs << "\n";
     std::cout << std::noboolalpha;
 }
 
